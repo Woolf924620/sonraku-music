@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SONRAKU | Music Hub</title>
+    <style>
+        :root {
+            --primary: #ff4d8d;
+            --secondary: #6a11cb;
+            --dark: #121212;
+            --light: #f8f9fa;
+            --gray: #2d2d2d;
+            --kpop: #ff4d8d;
+            --techno: #11cbd6;
+            --rock: #ff6b35;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: var(--light);
+            min-height: 100vh;
+            position: relative;
+            background-color: var(--dark);
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.15;
+            z-index: -1;
+            transition: all 0.5s ease;
+        }
+        
+        body.music-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        }
+        
+        body.videos-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1496293455970-f8581aae0e3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80');
+        }
+        
+        body.about-bg::before {
+            background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ff4d8d, #6a11cb, #11cbd6, #ff6b35, #ff4d8d);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 8s ease infinite;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            animation: gradient 3s ease infinite;
+            transform: scale(1.05);
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:hover, nav ul li a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background-color: rgba(18, 18, 18, 0.85);
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .genre-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .genre-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        
+        .genre-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .genre-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .genre-btn.kpop {
+            background-color: var(--kpop);
+            color: white;
+        }
+        
+        .genre-btn.techno {
+            background-color: var(--techno);
+            color: var(--dark);
+        }
+        
+        .genre-btn.rock {
+            background-color: var(--rock);
+            color: white;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background-color: var(--gray);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .card-artist {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .play-btn, .download-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .download-btn {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .play-btn:hover, .download-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .comments-section {
+            margin-top: 3rem;
+            background-color: var(--gray);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        .comments-title {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .comment-form {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+        
+        .comment-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 20px 0 0 20px;
+            background-color: #3d3d3d;
+            color: white;
+        }
+        
+        .comment-submit {
+            padding: 0 1.5rem;
+            border: none;
+            border-radius: 0 20px 20px 0;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .comment {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #555;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-user {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .comment-text {
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+        
+        .comment-date {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+        
+        /* About Section Styles */
+        .about-section {
+            padding: 1.5rem;
+        }
+        
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .about-section p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .about-section h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--primary);
+        }
+        
+        .about-section ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .about-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 77, 141, 0.4);
+        }
+        
+        footer {
+            background-color: rgba(17, 17, 17, 0.8);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer-text {
+            color: #777;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0.5rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="music-bg">
+    <header>
+        <div class="logo">SONRAKU</div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active" data-tab="music">Music</a></li>
+                <li><a href="#" data-tab="videos">Videos</a></li>
+                <li><a href="#" data-tab="about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="music">Music</div>
+            <div class="tab" data-tab="videos">Videos</div>
+            <div class="tab" data-tab="about">About</div>
+        </div>
+        
+        <div class="tab-content active" id="music-content">
+            <div class="genre-filters">
+                <button class="genre-btn kpop active" data-genre="kpop">K-Pop</button>
+                <button class="genre-btn techno" data-genre="techno">Techno</button>
+                <button class="genre-btn rock" data-genre="rock">Rock & Roll</button>
+            </div>
+            
+            <div class="content-grid">
+                <!-- K-Pop Cards -->
+                <div class="card" data-genre="kpop">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Song Cover" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Neon Dreams</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Play</button>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" data-genre="kpop">
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Song Cover" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Starlight</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Play</button>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Techno Cards -->
+                <div class="card" data-genre="techno">
+                    <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Song Cover" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Digital Pulse</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Play</button>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" data-genre="techno">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Song Cover" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Cyber Rave</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Play</button>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rock Cards -->
+                <div class="card" data-genre="rock">
+                    <img src="https://images.unsplash.com/photo-1496293455970-f8581aae0e3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Song Cover" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Rebel Heart</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Play</button>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" data-genre="rock">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Song Cover" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Guitar Storm</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Play</button>
+                            <button class="download-btn">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comments-section">
+                <h3 class="comments-title">Comments</h3>
+                <form class="comment-form">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
+                    <button type="submit" class="comment-submit">Post</button>
+                </form>
+                
+                <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-user">John Doe</div>
+                        <div class="comment-text">Love your new K-Pop track! The beat is amazing.</div>
+                        <div class="comment-date">2 days ago</div>
+                    </div>
+                </div>
+                
+                <div class="comment">
+                    <div class="comment-avatar">MS</div>
+                    <div class="comment-content">
+                        <div class="comment-user">MusicFan123</div>
+                        <div class="comment-text">When will you release more techno tracks? Your sound is unique!</div>
+                        <div class="comment-date">1 week ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="videos-content">
+            <div class="content-grid">
+                <!-- Video Cards -->
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1496293455970-f8581aae0e3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Video Thumbnail" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Neon Dreams MV</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Watch</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Video Thumbnail" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Digital Pulse Live</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Watch</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Video Thumbnail" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Rebel Heart Acoustic</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Watch</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Video Thumbnail" class="card-img">
+                    <div class="card-content">
+                        <h3 class="card-title">Behind The Scenes</h3>
+                        <p class="card-artist">SONRAKU</p>
+                        <div class="card-actions">
+                            <button class="play-btn">Watch</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comments-section">
+                <h3 class="comments-title">Video Comments</h3>
+                <form class="comment-form">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
+                    <button type="submit" class="comment-submit">Post</button>
+                </form>
+                
+                <div class="comment">
+                    <div class="comment-avatar">VF</div>
+                    <div class="comment-content">
+                        <div class="comment-user">VideoFan22</div>
+                        <div class="comment-text">The Neon Dreams MV visuals are stunning!</div>
+                        <div class="comment-date">3 days ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="about-content">
+            <div class="about-section">
+                <h2>About SONRAKU</h2>
+                <p>SONRAKU is a multi-genre music project blending K-Pop, Techno and Rock & Roll influences to create a unique sound experience. Our music transcends boundaries and creates a vibrant auditory journey for listeners worldwide.</p>
+                
+                <h3>Latest Releases</h3>
+                <ul>
+                    <li>Neon Dreams (K-Pop) - June 2023</li>
+                    <li>Digital Pulse (Techno) - May 2023</li>
+                    <li>Rebel Heart (Rock & Roll) - April 2023</li>
+                    <li>Starlight (K-Pop) - March 2023</li>
+                    <li>Cyber Rave (Techno) - February 2023</li>
+                </ul>
+                
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="https://youtube.com" target="_blank">YouTube</a>
+                    <a href="https://spotify.com" target="_blank">Spotify</a>
+                    <a href="https://instagram.com" target="_blank">Instagram</a>
+                    <a href="https://tiktok.com" target="_blank">TikTok</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p class="footer-text">© 2023 SONRAKU Music. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Tab switching functionality with background change
+        document.querySelectorAll('[data-tab]').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update navigation
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update tabs
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.querySelector(`#${tabId}-content`).classList.add('active');
+                
+                // Change background based on tab
+                document.body.className = `${tabId}-bg`;
+            });
+        });
+        
+        // Genre filtering
+        document.querySelectorAll('.genre-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const genre = this.getAttribute('data-genre');
+                document.querySelectorAll('.card').forEach(card => {
+                    if (genre === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = card.getAttribute('data-genre') === genre ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+        
+        // Comment form submission
+        document.querySelectorAll('.comment-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const input = this.querySelector('.comment-input');
+                const commentText = input.value.trim();
+                
+                if (commentText) {
+                    const commentsSection = this.closest('.comments-section').querySelector('.comment-form').parentNode;
+                    
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment';
+                    newComment.innerHTML = `
+                        <div class="comment-avatar">${getRandomInitials()}</div>
+                        <div class="comment-content">
+                            <div class="comment-user">Anonymous</div>
+                            <div class="comment-text">${commentText}</div>
+                            <div class="comment-date">Just now</div>
+                        </div>
+                    `;
+                    
+                    commentsSection.insertBefore(newComment, this.nextSibling);
+                    input.value = '';
+                }
+            });
+        });
+        
+        // Helper function for random initials
+        function getRandomInitials() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            return letters.charAt(Math.floor(Math.random() * letters.length));
+        }
+        
+        // Download button functionality (would need server-side implementation)
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.card');
+                const songTitle = card.querySelector('.card-title').textContent;
+                alert(`Downloading "${songTitle}"... (This would trigger a real download in a full implementation)`);
+            });
+        });
+        
+        // Play button functionality
+        document.querySelectorAll('.play-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.card');
+                const mediaTitle = card.querySelector('.card-title').textContent;
+                const isVideo = this.textContent === 'Watch';
+                
+                if (isVideo) {
+                    alert(`Playing video "${mediaTitle}" (Would embed YouTube player in full implementation)`);
+                } else {
+                    alert(`Playing song "${mediaTitle}" (Would use audio player in full implementation)`);
+                }
+            });
+        });
+        
+        // Activate the first tab on load
+        document.querySelector('[data-tab="music"]').click();
+    </script>
+</body>
+</html>
